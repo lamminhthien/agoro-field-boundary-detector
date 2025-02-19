@@ -55,13 +55,13 @@ function create_conda_env {
     conda-merge environment.run.yml environment.dev.yml > environment.yml
     # mamba env create --force
     # rm environment.yml
+    pip install setuptools==68
     conda env create -f environment.yml
     conda activate agoro-field-boundary-detector-env
     log "Done!\\n"
     log "Installing editable agoro_field_boundary_detector into conda environment...\\n\\n"
     # shellcheck disable=SC1091
     conda activate agoro-field-boundary-detector-env
-    pip install setuptools==68
     pip install --editable .
     # conda deactivate
     log "Done!\\n"
