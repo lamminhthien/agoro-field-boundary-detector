@@ -12,7 +12,6 @@ from matplotlib import pyplot as plt
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 from torchvision.transforms import functional as F_vis
-from torchvision.models.detection import MaskRCNN_ResNet50_FPN_Weights
 
 from agoro_field_boundary_detector.field_detection.dataset import Dataset
 from agoro_field_boundary_detector.field_detection.mask_rcnn.engine import evaluate, train_one_epoch
@@ -28,7 +27,7 @@ class FieldBoundaryDetector:
         n_classes: int = 2,
         n_hidden: int = 512,
         thr: float = 0.5,
-        pretrained: bool = True,
+        pretrained_resnet: bool = True,
         reset: bool = False,
     ) -> None:
         """
@@ -38,7 +37,7 @@ class FieldBoundaryDetector:
         :param n_classes: Number of the classes (outputs) the model should have
         :param n_hidden: Number of hidden layers used in the MaskRCNN predictor
         :param thr: Certainty threshold when defining masks (pixel-level)
-        :param pretrained: Use a pretrained ResNet backbone when creating a new Mask RCNN model
+        :param pretrained_resnet: Use a pretrained ResNet backbone when creating a new Mask RCNN model
         :param reset: Create a new model instead of loading a previously existing one
         """
         self.path = model_path
@@ -48,7 +47,7 @@ class FieldBoundaryDetector:
         self.model: Optional[torchvision.models.detection.maskrcnn_resnet50_fpn] = None
         self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")  # type: ignore
         if reset or not self.load():
-            self.create_instance_segmentation_model(pretrained)
+            self.create_instance_segmentation_model(pretrained_resnet)
 
     def __call__(
         self,
@@ -93,8 +92,7 @@ class FieldBoundaryDetector:
     def create_instance_segmentation_model(self, pretrained: bool = True) -> None:
         """Create an instance segmentation model."""
         # Load an instance segmentation model pre-trained on COCO
-        weights = MaskRCNN_ResNet50_FPN_Weights.DEFAULT if pretrained else None
-        self.model = torchvision.models.detection.maskrcnn_resnet50_fpn(weights=weights)
+        self.model = torchvision.models.detection.maskrcnn_resnet50_fpn(pretrained=pretrained)
 
         # Replace the pre-trained head (box and mask predictor)
         self.model.roi_heads.box_predictor = FastRCNNPredictor(
