@@ -83,11 +83,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model-path", default=Path(__file__).parent / "../../models/mask_rcnn", type=str
     )
-    parser.add_argument("--train", default=0, type=int)
+    parser.add_argument("--train", default=1, type=int, help="1 to train model, 0 to skip training")
     parser.add_argument(
         "--train-path", default=Path(__file__).parent / "../../data/augmented", type=str
     )
-    parser.add_argument("--test", default=1, type=int)
+    parser.add_argument("--test", default=1, type=int, help="1 to evaluate model, 0 to skip evaluation")
     parser.add_argument("--test-path", default=Path(__file__).parent / "../../data/test", type=str)
     args = parser.parse_args()
 
