@@ -91,7 +91,6 @@ all_polygons = model.get_all_polygons(im)
 # ]]
 ```
 
-
 ## Development
 
 ### Setup Environment

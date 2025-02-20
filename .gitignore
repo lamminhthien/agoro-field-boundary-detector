@@ -92,3 +92,4 @@ models/
 data/augmented
 data/test
 data/test_results
+data/raw

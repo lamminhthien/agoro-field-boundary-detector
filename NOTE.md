@@ -62,3 +62,117 @@ If you want to use the NVIDIA GeForce RTX 3060 GPU with PyTorch, please check th
 ```bash
 pip install --upgrade torch torchvision
 ```
+
+## Google Cloud SDK Setup Guide
+
+### Installing Google Cloud SDK on macOS
+
+1. Install using Homebrew:
+```bash
+brew install --cask google-cloud-sdk
+```
+
+2. Verify the installation:
+```bash
+gcloud version
+```
+
+### Initial Setup and Configuration
+
+1. Initialize gcloud:
+```bash
+gcloud init
+```
+
+2. Authenticate with your Google Account:
+```bash
+gcloud auth login
+```
+
+3. List available projects:
+```bash
+gcloud projects list
+```
+
+### Creating a New Project
+
+1. Create a new project:
+```bash
+gcloud projects create PROJECT_ID --name="Project Name"
+```
+Replace `PROJECT_ID` with your desired project ID (must be unique across all Google Cloud)
+
+2. Set the current project:
+```bash
+gcloud config set project PROJECT_ID
+```
+
+### Setting Up Application Default Credentials (ADC)
+
+1. Set up application default credentials:
+```bash
+gcloud auth application-default login
+```
+
+2. Set quota project for ADC:
+```bash
+gcloud auth application-default set-quota-project PROJECT_ID
+```
+
+### Enable Required APIs
+
+1. Enable necessary APIs for your project:
+```bash
+# Example: Enable Cloud Storage API
+gcloud services enable storage.googleapis.com
+
+# Example: Enable Cloud Vision API
+gcloud services enable vision.googleapis.com
+```
+
+### Managing Service Accounts (Optional)
+
+1. Create a service account:
+```bash
+gcloud iam service-accounts create SERVICE_ACCOUNT_NAME \
+    --display-name="Service Account Display Name"
+```
+
+2. Generate service account key:
+```bash
+gcloud iam service-accounts keys create key-file.json \
+    --iam-account=SERVICE_ACCOUNT_NAME@PROJECT_ID.iam.gserviceaccount.com
+```
+
+### Useful gcloud Commands
+
+- List configurations:
+```bash
+gcloud config list
+```
+
+- Switch between accounts:
+```bash
+gcloud config set account ACCOUNT
+```
+
+- List authenticated accounts:
+```bash
+gcloud auth list
+```
+
+### Troubleshooting
+
+If you encounter quota errors:
+1. Ensure you have billing enabled for your project
+2. Verify API enablement in Google Cloud Console
+3. Check if you have set the correct quota project:
+```bash
+gcloud auth application-default set-quota-project PROJECT_ID
+```
+
+To revoke credentials if needed:
+```bash
+gcloud auth revoke
+gcloud auth application-default revoke
+```
