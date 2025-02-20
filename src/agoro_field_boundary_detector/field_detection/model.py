@@ -331,6 +331,7 @@ class FieldBoundaryDetector:
 
     def save(self) -> None:
         """Save the model."""
+        self.path.parent.mkdir(parents=True, exist_ok=True)  # Create directory if it doesn't exist
         self.model.to(torch.device("cpu"))  # type: ignore
         torch.save(
             self.model,
