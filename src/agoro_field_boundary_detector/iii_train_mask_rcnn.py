@@ -2,8 +2,12 @@
 import os
 from pathlib import Path
 from typing import Optional
+import logging
 
 from agoro_field_boundary_detector.field_detection import Dataset, FieldBoundaryDetector
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
 
@@ -87,20 +91,30 @@ if __name__ == "__main__":
     parser.add_argument("--test-path", default=Path(__file__).parent / "../../data/test", type=str)
     args = parser.parse_args()
 
+    # Log paths
+    logging.info(f"Model path: {args.model_path}")
+    logging.info(f"Train path: {args.train_path}")
+    logging.info(f"Test path: {args.test_path}")
+
     # Load in the model
     field_detector = FieldBoundaryDetector(model_path=args.model_path)
 
     # Train, if requested
     if args.train:
+        logging.info("Starting training...")
         train(
             model=field_detector,
             path=args.train_path,
         )
+        logging.info("Training completed")
+
     # Test, if requested
     if args.test:
+        logging.info("Starting evaluation...")
         evaluate(
             model=field_detector,
             path=args.test_path,
             n_show=10,
             write_path=Path(__file__).parent / "../../data/test_results",
         )
+        logging.info("Evaluation completed")

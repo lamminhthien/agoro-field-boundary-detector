@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from random import getrandbits
 from shutil import rmtree
+import logging
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
@@ -40,7 +41,8 @@ class FieldBoundaryDetector:
         :param pretrained_resnet: Use a pretrained ResNet backbone when creating a new Mask RCNN model
         :param reset: Create a new model instead of loading a previously existing one
         """
-        self.path = model_path
+        self.path = Path(model_path)  # Ensure it's a Path object
+        logging.info(f"Initializing model with path: {self.path}")
         self.n_classes = n_classes
         self.n_hidden = n_hidden
         self.thr = thr
@@ -171,6 +173,7 @@ class FieldBoundaryDetector:
         # Create temporal folder to store models in
         temp_folder = Path.cwd() / f"{getrandbits(128)}"
         temp_folder.mkdir(exist_ok=False, parents=True)
+        logging.info(f"Created temporary folder for model checkpoints: {temp_folder}")
 
         # Train the model
         best_f1, best_epoch, last_improvement = 0.0, 0, 0
@@ -212,8 +215,11 @@ class FieldBoundaryDetector:
                 break
 
         # Revert back to best-performing model and delete temporal files
+        logging.info(f"Loading best model from epoch {best_epoch}")
         self.model = torch.load(temp_folder / f"{best_epoch}")  # type: ignore
+        logging.info(f"Removing temporary folder: {temp_folder}")
         rmtree(temp_folder)
+        logging.info("Saving best model...")
         self.save()
 
     def test(
@@ -324,16 +330,26 @@ class FieldBoundaryDetector:
 
     def load(self) -> bool:
         """Load a previously saved model."""
+        logging.info(f"Attempting to load model from: {self.path}")
         if self.path.is_file():
+            logging.info("Found existing model file")
             self.model = torch.load(self.path, map_location=self.device)  # type: ignore
             return True
+        logging.info("No existing model file found")
         return False
 
     def save(self) -> None:
         """Save the model."""
-        self.path.parent.mkdir(parents=True, exist_ok=True)  # Create directory if it doesn't exist
-        self.model.to(torch.device("cpu"))  # type: ignore
-        torch.save(
-            self.model,
-            self.path,
-        )
+        logging.info(f"Saving model to: {self.path}")
+        try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            logging.info(f"Created model directory: {self.path.parent}")
+            self.model.to(torch.device("cpu"))  # type: ignore
+            torch.save(
+                self.model,
+                self.path,
+            )
+            logging.info("Model saved successfully")
+        except Exception as e:
+            logging.error(f"Error saving model: {str(e)}")
+            raise
