@@ -128,22 +128,6 @@ gcloud auth application-default login
 ```bash
 gcloud auth application-default set-quota-project PROJECT_ID
 ```
-### Useful gcloud Commands
-
-- List configurations:
-```bash
-gcloud config list
-```
-
-- Switch between accounts:
-```bash
-gcloud config set account ACCOUNT
-```
-
-- List authenticated accounts:
-```bash
-gcloud auth list
-```
 
 ### Troubleshooting
 
