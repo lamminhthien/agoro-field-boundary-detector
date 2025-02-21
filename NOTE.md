@@ -80,8 +80,18 @@ gcloud version
 ### Initial Setup and Configuration
 
 1. Initialize gcloud:
+For MACOS:
 ```bash
 gcloud init
+```
+
+For Ubuntu / Debian
+```bash
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates gnupg curl
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+sudo apt-get update && sudo apt-get install google-cloud-cli
 ```
 
 2. Authenticate with your Google Account:
@@ -118,32 +128,6 @@ gcloud auth application-default login
 ```bash
 gcloud auth application-default set-quota-project PROJECT_ID
 ```
-
-### Enable Required APIs
-
-1. Enable necessary APIs for your project:
-```bash
-# Example: Enable Cloud Storage API
-gcloud services enable storage.googleapis.com
-
-# Example: Enable Cloud Vision API
-gcloud services enable vision.googleapis.com
-```
-
-### Managing Service Accounts (Optional)
-
-1. Create a service account:
-```bash
-gcloud iam service-accounts create SERVICE_ACCOUNT_NAME \
-    --display-name="Service Account Display Name"
-```
-
-2. Generate service account key:
-```bash
-gcloud iam service-accounts keys create key-file.json \
-    --iam-account=SERVICE_ACCOUNT_NAME@PROJECT_ID.iam.gserviceaccount.com
-```
-
 ### Useful gcloud Commands
 
 - List configurations:
